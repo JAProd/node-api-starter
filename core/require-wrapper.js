@@ -45,11 +45,12 @@ global.requireModel = function (modelName, moduleName) {
 global.requireConfig = function (configName, moduleName) {
     try {
         if (moduleName === undefined) {
-            return require(path.join(global.rootFolder, 'config', configName + '.' + process.env.NODE_ENV + '.json'));
+            return require(path.join(global.rootFolder, 'app', 'config', configName + '.' + process.env.NODE_ENV + '.json'));
         } else {
-            return require(path.join(global.rootFolder, 'config', moduleName, configName + '.' + process.env.NODE_ENV + '.json'));
+            return require(path.join(global.rootFolder, 'app', 'config', moduleName, configName + '.' + process.env.NODE_ENV + '.json'));
         }
     } catch (ex) {
         console.log("No config file found with name " + configName);
+        return {};
     }
 }
