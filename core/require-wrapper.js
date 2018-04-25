@@ -3,54 +3,46 @@ var path = require('path');
 global.rootFolder = path.join(__dirname, "..");
 
 /**
- * require the controller by its name and module. If the package is not defined, it will get the controller from the base app.
+ * require the controller by its name and module.
  * 
  */
-global.requireController = function (controllerName, moduleName) {
-    if (moduleName === undefined) {
-        return require(path.join(global.rootFolder, 'app', 'controllers', controllerName));
-    } else {
-        return require(path.join(global.rootFolder, 'modules', moduleName, 'controllers', controllerName));
-    }
+global.requireController = function (controllerName) {
+    return require(path.join(global.rootFolder, 'app', 'controller', controllerName));
 }
 
 /**
- * require the service by its name and module. If the package is not defined, it will get the service from the base app.
+ * require the service by its name and module.
  * 
  */
-global.requireService = function (serviceName, moduleName) {
-    if (moduleName === undefined) {
-        return require(path.join(global.rootFolder, 'app', 'services', serviceName));
-    } else {
-        return require(path.join(global.rootFolder, 'modules', moduleName, 'services', serviceName));
-    }
+global.requireService = function (serviceName) {
+    return require(path.join(global.rootFolder, 'app', 'service', serviceName));
 }
 
 /**
- * require the model by its name and module. If the package is not defined, it will get the model from the base app.
+ * require the model by its name and module.
  * 
  */
-global.requireModel = function (modelName, moduleName) {
-    if (moduleName === undefined) {
-        return require(path.join(global.rootFolder, 'app', 'models', modelName));
-    } else {
-        return require(path.join(global.rootFolder, 'modules', moduleName, 'models', modelName));
-    }
+global.requireModel = function (modelName) {
+    return require(path.join(global.rootFolder, 'app', 'model', modelName));
 }
 
 /**
- * require the config by its name. If the package is not defined, it will get the config from the base app.
+ * require the config by its name.
  * 
  */
-global.requireConfig = function (configName, moduleName) {
+global.requireConfig = function (configName) {
     try {
-        if (moduleName === undefined) {
-            return require(path.join(global.rootFolder, 'app', 'config', configName + '.' + process.env.NODE_ENV + '.json'));
-        } else {
-            return require(path.join(global.rootFolder, 'app', 'config', moduleName, configName + '.' + process.env.NODE_ENV + '.json'));
-        }
+        return require(path.join(global.rootFolder, 'app', 'config', configName + '.' + process.env.NODE_ENV + '.json'));
     } catch (ex) {
         console.log("No config file found with name " + configName);
         return {};
     }
+}
+
+/**
+ * require the errors by its type name.
+ * 
+ */
+global.requireErrors = function (errorTypeName) {
+    return require(path.join(global.rootFolder, 'app', 'error', errorTypeName));
 }

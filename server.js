@@ -8,17 +8,47 @@ console.log("Starting app in " + process.env.NODE_ENV + ' mode.');
 require('./core/require-wrapper');
 
 // database set up =============================================================
-var mongoose = require('mongoose');
-var mongoConfig = requireConfig('mongo');
+let mongoose = require('mongoose');
+let mongoConfig = requireConfig('mongo');
 mongoose.connect(mongoConfig.url);
 mongoose.Promise = require('bluebird');
 
+// init all mongoose models ====================================================
+const fs = require('fs');
+let models_path = __dirname + '/app/model'
+fs.readdirSync(models_path).forEach(function (file) {
+    requireModel(file)
+})
+
 // server set up ===============================================================
-var restify = require('restify');
-var serverConfig = requireConfig("server");
-var server = restify.createServer();
-var authenticationMiddleware = require("./core/authentication");
+let appFilters = null;
+try {
+    appFilters = require("./app/filter/setup");
+} catch (e) {
+    console.log("No app filter setup found");
+}
+let restify = require('restify');
+let serverConfig = requireConfig("server");
+let server = restify.createServer();
+//app preAuth filters
+if (appFilters) {
+    appFilters.preAuthenticationFilters.forEach(function (filter) {
+        server.use(filter);
+    })
+}
+let authenticationMiddleware = require("./core/authentication");
 server.use(authenticationMiddleware);
+//app postAuth filters
+if (appFilters) {
+    appFilters.postAuthenticationFilters.forEach(function (filter) {
+        server.use(filter);
+    })
+}
+server.on('ResourceDoesNotExist', function (req, res, err, cb) {
+    console.log("le sexe en barre");
+    return cb();
+});
+
 
 // routes ======================================================================
 require('./app/routes')(server);
